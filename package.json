@@ -1,0 +1,23 @@
+{
+  "name": "numerical-integration-website",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abigailajamian/Numerical-Integration-Website.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/abigailajamian/Numerical-Integration-Website/issues"
+  },
+  "homepage": "https://github.com/abigailajamian/Numerical-Integration-Website#readme",
+  "dependencies": {
+    "plotly.js-dist": "^2.22.0"
+  }
+}

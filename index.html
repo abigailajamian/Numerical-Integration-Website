@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
 </head>
 <body>
     <div class="header">
@@ -18,13 +20,15 @@
             <label for="xknot">XKNOT Value :</label>
             <input type="number" placeholder="XKNOT Value Here">
             <label for="dt">DT Value :</label>
-            <input type="number" placeholder="DT Value Here">
+            <input id="dt" type="number" placeholder="DT Value Here">
             <label for="t-max">T-Max Value :</label>
-            <input type="number" placeholder="T-Max Value Here">
+            <input id="tmax" type="number" placeholder="T-Max Value Here">
 
         </form>
         <button type="submit" id="submit">Graph Values</button>
         <button type="reset" id="reset">Reset Data</button>    
+    </div>
+    <div class="right-side">
     </div>
     <script src="script.js"></script>
 </body>
