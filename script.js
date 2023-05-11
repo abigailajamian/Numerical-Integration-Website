@@ -90,27 +90,41 @@ const mainFlow= (()=>{
 	}
 
 	const hoverFunction = (label) => {
+		// create dom manipulation elements
+		let left = document.querySelector('.left-side')
+		let firstNew = document.createElement('div');
 		let newDiv = document.createElement('div');
+		//create div to overlay on form (append the descriptions to)
+		firstNew.classList.add('descriptions');
+		left.append(firstNew);
+		//making the desriptions
 		newDiv.id = 'popup';
 		if(label.innerText == 'XDOT Value :'){
 			newDiv.innerText = 'xdot description here';
-			label.append(newDiv);
+			firstNew.append(newDiv);
+			firstNew.style.marginTop = '-21%';
 		} else if (label.innerText == 'XKNOT Value :'){
 			newDiv.innerText = 'xknot description here';
-			label.append(newDiv);
+			firstNew.append(newDiv);
+			firstNew.style.marginTop = '-17%';
 		}else if (label.innerText == 'DT Value :'){
 			newDiv.innerText = 'dt description here';
-			label.append(newDiv);
+			firstNew.append(newDiv);
+			firstNew.style.marginTop = '-13%';
 		}else if (label.innerText == 'T-Max Value :'){
 			newDiv.innerText = 'tmax description here';
-			label.append(newDiv);
+			firstNew.append(newDiv);
+			firstNew.style.marginTop = '-9%';
 		}
 	}
 	const noHover = () => {
-		let div = document.querySelector('#popup');
-		let label = document.querySelector('label');
-		label.removeChild(div);
+		let div = document.querySelector('.descriptions');
+		let left = document.querySelector('.left-side')
+		left.removeChild(div);
+
 	}
+
+
 	return{main,resetFunction,hoverFunction,noHover}
 })();
 
