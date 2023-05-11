@@ -16,7 +16,17 @@
     <div class="left-side">
         <form action="">
             <label for="xdot">XDOT Value :</label>
-            <input id="xdot" type="number" placeholder="XDOT Value Here">
+            <label id="xdot" for="xdot-type">Type -</label>
+            <select id="xdot-type">
+                <option value="type">Choose Type</option>
+                <option value="exponential">Exponential</option>
+                <option value="K(t)^a">K(t)^a</option>
+                <option value="K*cos(a*t)">K*cos(a*t)</option>
+                <option value="k*sin(a*t)">K*sin(a*t)</option>
+                <option value="K*e^at">K*e^at</option>
+            </select>
+            <label for="xdot-value">Value -</label>
+            <input id= "xdot-value" type="number" placeholder="XDOT Value Here">
             <label for="xknot">XKNOT Value :</label>
             <input id="xknot" type="number" placeholder="XKNOT Value Here">
             <label for="dt">DT Value :</label>

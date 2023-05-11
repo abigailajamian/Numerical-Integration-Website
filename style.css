@@ -27,6 +27,11 @@ form input{
     width: 15%;
 }
 
+form select {
+    width: 15.5%;
+    padding: 1px;
+}
+
 .left-side button{
     align-self: end;
     margin-right: 90%;
@@ -65,3 +70,15 @@ form label {
     border-style: dotted;
 }
 
+label[for='xdot-type'],label[for='xdot-value'],label[for = 'k-value']{
+    margin-left: 2%;
+}
+
+#xdot-type,#xdot-value{
+    margin-left: 5%;
+    margin-top: -2%;
+}
+#k-value{
+    margin-left: 6%;
+    margin-top: -2%;
+}

@@ -22,7 +22,6 @@ const xOfT = (()=>{
 		let t  = xAxis;
 		numericalIntegrators.trapInt(xKnot,dervative.exponential,t);
 		yAxis.push(numericalIntegrators.positionList);
-	//create main flow (call when enter is pressed/clicked)
 	}
 
 	const main = () => {
@@ -90,7 +89,7 @@ const mainFlow= (()=>{
 	}
 
 	const hoverFunction = (label) => {
-		// create dom manipulation elements
+		// define dom manipulation elements
 		let left = document.querySelector('.left-side')
 		let firstNew = document.createElement('div');
 		let newDiv = document.createElement('div');
@@ -102,7 +101,7 @@ const mainFlow= (()=>{
 		if(label.innerText == 'XDOT Value :'){
 			newDiv.innerText = 'xdot description here';
 			firstNew.append(newDiv);
-			firstNew.style.marginTop = '-21%';
+			firstNew.style.marginTop = '-23%';
 		} else if (label.innerText == 'XKNOT Value :'){
 			newDiv.innerText = 'xknot description here';
 			firstNew.append(newDiv);
@@ -115,6 +114,8 @@ const mainFlow= (()=>{
 			newDiv.innerText = 'tmax description here';
 			firstNew.append(newDiv);
 			firstNew.style.marginTop = '-9%';
+		} else {
+			left.removeChild(firstNew);
 		}
 	}
 	const noHover = () => {
@@ -216,8 +217,21 @@ const domElements = (()=>{
 
 	}
 
+	//add k value input if needed
 
-	return{getDT,getTMax,getKnot,getDot,createXOfTGraph,enter,createXDotGraph,reset,hover}
+	const kValue = () => {
+		let form = document.querySelector('form');
+		let label = document.createElement('label');
+		let input = document.createElement('input');
+		input.id='k-value'
+		input.setAttribute('placeholder','K Value Here')
+		label.setAttribute('for','k-value');
+		label.innerText = 'K Value -'
+		form.insertBefore(label, form.children[5]);
+		form.insertBefore(input, form.children[6])
+	}
+
+	return{getDT,getTMax,getKnot,getDot,createXOfTGraph,enter,createXDotGraph,reset,hover,kValue}
 })();
 
 
