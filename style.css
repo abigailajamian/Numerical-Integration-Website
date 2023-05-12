@@ -74,11 +74,11 @@ label[for='xdot-type'],label[for='xdot-value'],label[for = 'k-value']{
     margin-left: 2%;
 }
 
-#xdot-type,#xdot-value{
+#xdot-type{
     margin-left: 5%;
     margin-top: -2%;
 }
-#k-value{
+#k-value,#xdot-value{
     margin-left: 6%;
     margin-top: -2%;
 }

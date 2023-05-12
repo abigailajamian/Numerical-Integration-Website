@@ -12,15 +12,24 @@ const xOfT = (()=>{
 	}
 
 	const collectXAxisData= ()=>{
-		let dt = parseInt(domElements.getDT());
-		let tmax = parseInt(domElements.getTMax());
+		let dt = parseFloat(domElements.getDT());
+		let tmax = parseFloat(domElements.getTMax());
 		createXAxisArray(tmax,dt);
 	}
 
 	const collectYAxisData = () => {
-		let xKnot = parseInt(domElements.getKnot());
+		let xKnot = parseFloat(domElements.getKnot());
 		let t  = xAxis;
-		numericalIntegrators.trapInt(xKnot,dervative.exponential,t);
+		let type = domElements.getType();
+		if (type == 'k(t)^a'){
+			numericalIntegrators.trapInt(xKnot,dervative.exponential,t);
+		} else if(type == 'k*cos(a*t)'){
+			numericalIntegrators.trapInt(xKnot,dervative.cos,t);
+		} else if (type == 'k*sin(a*t)'){
+			numericalIntegrators.trapInt(xKnot,dervative.sin,t);
+		} else if(type == 'k*e^at'){
+			numericalIntegrators.trapInt(xKnot,dervative.eFunction,t);
+		}
 		yAxis.push(numericalIntegrators.positionList);
 	}
 
@@ -31,7 +40,7 @@ const xOfT = (()=>{
 		domElements.createXOfTGraph();
 	}
 
-	return {createXAxisArray,collectXAxisData,collectYAxisData,xAxis,yAxis,main}
+	return {createXAxisArray,collectXAxisData,collectYAxisData,xAxis,yAxis,main,}
 })();
 
 const xDotOfT = (()=>{
@@ -41,8 +50,18 @@ const xDotOfT = (()=>{
 
 	const findYValues = () => {
 		//math to graph xdot of t 
+		let type = domElements.getType();
 		for (let i = 0;i<xAxis.length;i++){
-		let y = dervative.exponential([i]);
+			if (type == 'k(t)^a'){
+				 y = dervative.exponential(xAxis[i]);
+			} else if(type == 'k*cos(a*t)'){
+				 y = dervative.cos(xAxis[i]);
+			} else if (type == 'k*sin(a*t)'){
+				 y = dervative.sin(xAxis[i]);
+			} else if(type ='k*e^at'){
+				y = dervative.eFunction(xAxis[i]);
+			}
+		
 		yAxis.push(y);
 		}
 	}
@@ -57,16 +76,37 @@ const xDotOfT = (()=>{
 
 const mainFlow= (()=>{
 
+	const mainSetUp = () => {
+		domElements.enter();
+		domElements.reset();
+		domElements.hover();
+	}
+
 	//main flow/calls all functions to make graph work 
+	
 	const main =()=>{
 		xOfT.collectXAxisData();
 		xOfT.collectYAxisData ();
-		domElements.createXOfTGraph();
 		xDotOfT.findYValues();
-		domElements.createXDotGraph();
-		
-	}
+		//creates a loop function fo plot 1 data point at a time
+		let i = 0;
+		function myLoop(){
+			setTimeout(function(){
+				let subX = xOfT.xAxis.slice(0,i);
+				let subY = xOfT.yAxis.slice(0,i);
+				let subXDot =xDotOfT.xAxis.slice(0,i) ;
+				let subYDot= xDotOfT.yAxis.slice(0,i); 
+				domElements.createXOfTGraph(subX,subY);
+				domElements.createXDotGraph(subXDot,subYDot);
 
+				i++;
+				if(i<xOfT.xAxis.length){
+					myLoop();
+				}
+			},100);
+		}
+		myLoop();
+	}
 	//resets the whole page and clears arrays in xoft and xdotoft module patterns
 
 	const resetFunction = () =>{
@@ -101,7 +141,7 @@ const mainFlow= (()=>{
 		if(label.innerText == 'XDOT Value :'){
 			newDiv.innerText = 'xdot description here';
 			firstNew.append(newDiv);
-			firstNew.style.marginTop = '-23%';
+			firstNew.style.marginTop = '-25%';
 		} else if (label.innerText == 'XKNOT Value :'){
 			newDiv.innerText = 'xknot description here';
 			firstNew.append(newDiv);
@@ -118,15 +158,19 @@ const mainFlow= (()=>{
 			left.removeChild(firstNew);
 		}
 	}
-	const noHover = () => {
-		let div = document.querySelector('.descriptions');
-		let left = document.querySelector('.left-side')
-		left.removeChild(div);
+	const noHover = (label) => {
+		
+		if (label.innerText == 'Type -' ||label.innerText == 'a value -' ||label.innerText == 'k value -' ){
+			return;
+		} else{
+			let div = document.querySelector('.descriptions');
+			div.remove();
+		}
 
 	}
 
 
-	return{main,resetFunction,hoverFunction,noHover}
+	return{main,resetFunction,hoverFunction,noHover,mainSetUp}
 })();
 
 const domElements = (()=>{
@@ -148,26 +192,36 @@ const domElements = (()=>{
 	}
 
 	const getDot = () => {
-		let input = document.querySelector('#xdot').value;
+		let input = document.querySelector('#xdot-value').value;
+		return input;
+	}
+
+	let getKValue= () => {
+		let input = document.querySelector('#k-value').value;
+		return input;
+	}
+
+	let getType = () => {
+		let input = document.querySelector('#xdot-type').value;
 		return input;
 	}
 
 	// create graphs using data
 
-	const createXOfTGraph = () => {
+	const createXOfTGraph = (x,y) => {
 		let graph = document.querySelector('#xoft');
-		let ymax = xOfT.yAxis[xOfT.yAxis.length -1];
+		
 
 		let data = [{
-			x:xOfT.xAxis,
-			y:xOfT.yAxis,
+			x:x,
+			y:y,
 			mode: "lines+markers",
 			type:"scatter"
 		}];
 
 		let layout = {
-			xaxis : {range: [0, parseInt(domElements.getTMax())],title:"t"},
-			yaxis : {range:[0,ymax], title:"X(t)"},
+			xaxis : {title:"t"},
+			yaxis : { title:"X(t)"},
 			title: 'X Of T Graph'
 		};
  
@@ -175,20 +229,19 @@ const domElements = (()=>{
 
 	}
 
-	const createXDotGraph = () =>{
+	const createXDotGraph = (x,y) =>{
 		let graph = document.querySelector('#xdotoft');
-		let ymax = xDotOfT.yAxis[xDotOfT.yAxis.length -1];
 
 		let data = [{
-			x:xDotOfT.xAxis,
-			y:xDotOfT.yAxis,
+			x:x,
+			y:y,
 			mode: "lines+markers",
 			type:"scatter"
 		}];
 
 		let layout = {
-			xaxis : {range: [0, parseInt(domElements.getTMax())],title:"t"},
-			yaxis : {range:[0,ymax], title:"X Dot (t)"},
+			xaxis : {title:"t"},
+			yaxis : {title:"X Dot (t)"},
 			title: 'X Dot Of T Graph'
 		};
 	
@@ -212,26 +265,12 @@ const domElements = (()=>{
 		let label = document.querySelectorAll('label');
 		for (let i = 0 ; i<label.length;i++){
 			label[i].addEventListener('mouseover', () => {mainFlow.hoverFunction (label[i])});
-			label[i].addEventListener('mouseleave',mainFlow.noHover);
+			label[i].addEventListener('mouseleave',() => {mainFlow.noHover (label[i])});
 		}
 
 	}
 
-	//add k value input if needed
-
-	const kValue = () => {
-		let form = document.querySelector('form');
-		let label = document.createElement('label');
-		let input = document.createElement('input');
-		input.id='k-value'
-		input.setAttribute('placeholder','K Value Here')
-		label.setAttribute('for','k-value');
-		label.innerText = 'K Value -'
-		form.insertBefore(label, form.children[5]);
-		form.insertBefore(input, form.children[6])
-	}
-
-	return{getDT,getTMax,getKnot,getDot,createXOfTGraph,enter,createXDotGraph,reset,hover,kValue}
+	return{getDT,getTMax,getKnot,getDot,createXOfTGraph,enter,createXDotGraph,reset,hover,getKValue,getType}
 })();
 
 
@@ -241,7 +280,7 @@ const numericalIntegrators = (() => {
 		let positionList = xOfT.yAxis;
 		let previousXDot = derivativeFunc(0);//initalizes it 
 		let previousX = Xknot; // initalizes x 
-		positionList.push(previousXDot);
+		positionList.push(previousX);
 		for(let i=1;i<t.length;i++){
 			let dt = t[i]-t[i-1]; // determines the space length between each one
 			let currentXDot = derivativeFunc(t[i]);
@@ -258,16 +297,35 @@ const numericalIntegrators = (() => {
 })();
 
 const dervative = (()=> {
-	//TODO; change to be more generalized and work with other deravatives
+
 	const exponential = (t) =>{
+		let k = domElements.getKValue();
 		let a = domElements.getDot();
-		return t**a;
+		return k*(t**a);
 	}
 
-	return {exponential}
+	const cos =(t)=>{
+		let k = parseFloat(domElements.getKValue());
+		let a = parseFloat(domElements.getDot());
+		return k*Math.cos(a*t);
+	}
+
+ 	const sin = (t) => {	
+		let k = domElements.getKValue();
+		let a = domElements.getDot();
+		return k*Math.sin(a*t);
+	}
+
+	const eFunction = (t) => {
+		let e = Math.E;
+		let k = domElements.getKValue();
+		let a = domElements.getDot();
+		return k*e**(a*t);
+	}
+
+	return {exponential,cos,sin,eFunction}
 })();
 
-//need to call to add event listners (add in a main setup function to do this )
-domElements.enter();
-domElements.reset();
-domElements.hover();
+mainFlow.mainSetUp();
+
+
