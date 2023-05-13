@@ -2,7 +2,11 @@ const xOfT = (()=>{
 	let xAxis=[];
 	let yAxis = []; 
 	// use data recieved from inputs to create xaxis and yaxis data 
+	
 	const createXAxisArray = (tmax,dt)=>{
+		while(xAxis.length>0){
+			xAxis.pop();
+		}
 		let currentTime =0;
 		while (currentTime < tmax){
 			xAxis.push(currentTime);
@@ -15,32 +19,33 @@ const xOfT = (()=>{
 		let dt = parseFloat(domElements.getDT());
 		let tmax = parseFloat(domElements.getTMax());
 		createXAxisArray(tmax,dt);
+	
 	}
 
 	const collectYAxisData = () => {
+		while(yAxis.length>0){
+			yAxis.pop();
+		}
+		let y = [];
 		let xKnot = parseFloat(domElements.getKnot());
 		let t  = xAxis;
 		let type = domElements.getType();
 		if (type == 'k(t)^a'){
-			numericalIntegrators.trapInt(xKnot,dervative.exponential,t);
+			y = numericalIntegrators.trapInt(xKnot,dervative.exponential,t);
 		} else if(type == 'k*cos(a*t)'){
-			numericalIntegrators.trapInt(xKnot,dervative.cos,t);
+			y =  numericalIntegrators.trapInt(xKnot,dervative.cos,t);
 		} else if (type == 'k*sin(a*t)'){
-			numericalIntegrators.trapInt(xKnot,dervative.sin,t);
+			y =  numericalIntegrators.trapInt(xKnot,dervative.sin,t);
 		} else if(type == 'k*e^at'){
-			numericalIntegrators.trapInt(xKnot,dervative.eFunction,t);
+			y = numericalIntegrators.trapInt(xKnot,dervative.eFunction,t);
 		}
-		yAxis.push(numericalIntegrators.positionList);
-	}
-
-	const main = () => {
-		collectXAxisData();
-		collectYAxisData ();
 		
-		domElements.createXOfTGraph();
+		for(let i = 0;i<y.length;i++){
+			yAxis.push(y[i]);
+		}
 	}
 
-	return {createXAxisArray,collectXAxisData,collectYAxisData,xAxis,yAxis,main,}
+	return {createXAxisArray,collectXAxisData,collectYAxisData,xAxis,yAxis}
 })();
 
 const xDotOfT = (()=>{
@@ -50,6 +55,9 @@ const xDotOfT = (()=>{
 
 	const findYValues = () => {
 		//math to graph xdot of t 
+		while(yAxis.length>0){
+			yAxis.pop();
+		}
 		let type = domElements.getType();
 		for (let i = 0;i<xAxis.length;i++){
 			if (type == 'k(t)^a'){
@@ -80,11 +88,13 @@ const mainFlow= (()=>{
 		domElements.enter();
 		domElements.reset();
 		domElements.hover();
+		domElements.typeChosen();
 	}
 
 	//main flow/calls all functions to make graph work 
 	
 	const main =()=>{
+		
 		xOfT.collectXAxisData();
 		xOfT.collectYAxisData ();
 		xDotOfT.findYValues();
@@ -106,6 +116,7 @@ const mainFlow= (()=>{
 			},100);
 		}
 		myLoop();
+		
 	}
 	//resets the whole page and clears arrays in xoft and xdotoft module patterns
 
@@ -270,14 +281,39 @@ const domElements = (()=>{
 
 	}
 
-	return{getDT,getTMax,getKnot,getDot,createXOfTGraph,enter,createXDotGraph,reset,hover,getKValue,getType}
+	const typeChosen = () => {
+		let select = document.querySelector('#xdot-type');
+		select.addEventListener('change', defaultInputs);
+	
+	}
+
+	//add default values	
+	const defaultInputs = () => {
+		let input = document.querySelector('#xdot-type').value;
+		if (input != 'Choose Type'){
+			let a = document.querySelector('#xdot-value');
+			let k = document.querySelector('#k-value');
+			let Xknot = document.querySelector('#xknot');
+			let dt = document.querySelector('#dt');
+			let tmax = document.querySelector('#tmax');
+			a.value= '2';
+			k.value= '1';
+			Xknot.value = '0';
+			dt.value = '.1';
+			tmax.value = '8';
+			
+
+		}
+	}
+
+	return{getDT,getTMax,getKnot,getDot,createXOfTGraph,enter,createXDotGraph,reset,hover,getKValue,getType,typeChosen,defaultInputs}
 })();
 
 
 const numericalIntegrators = (() => {
 	
 	const trapInt = (Xknot,derivativeFunc,t) =>{
-		let positionList = xOfT.yAxis;
+		let positionList = [];
 		let previousXDot = derivativeFunc(0);//initalizes it 
 		let previousX = Xknot; // initalizes x 
 		positionList.push(previousX);
@@ -289,6 +325,7 @@ const numericalIntegrators = (() => {
 			previousXDot = currentXDot;
 			previousX =  currentX;
 		}
+		return positionList;
 	}
 
 
