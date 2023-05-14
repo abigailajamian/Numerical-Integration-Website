@@ -223,12 +223,20 @@ const domElements = (()=>{
 		let graph = document.querySelector('#xoft');
 		
 
+		let trace1 = {
+			x:[0,0],
+			y:[y[y.length -1], y[y.length -2]],
+			fill:'tozeroy'
+
+		}
+
 		let data = [{
 			x:x,
 			y:y,
 			mode: "lines+markers",
-			type:"scatter"
-		}];
+			type:"scatter",
+			
+		},trace1];
 
 		let layout = {
 			xaxis : {title:"t"},
@@ -243,12 +251,20 @@ const domElements = (()=>{
 	const createXDotGraph = (x,y) =>{
 		let graph = document.querySelector('#xdotoft');
 
+		let trace1 = {
+			x:x.slice(-2),
+			y:y.slice(-2),
+			fill:'tozeroy'
+
+		}
+
 		let data = [{
 			x:x,
 			y:y,
 			mode: "lines+markers",
 			type:"scatter"
-		}];
+			
+		},trace1];
 
 		let layout = {
 			xaxis : {title:"t"},
