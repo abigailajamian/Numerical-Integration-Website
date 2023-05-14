@@ -32,18 +32,23 @@ const xOfT = (()=>{
 		let type = domElements.getType();
 		if (type == 'k(t)^a'){
 			y = numericalIntegrators.trapInt(xKnot,dervative.exponential,t);
+			truthValues.exponential(t);
 		} else if(type == 'k*cos(a*t)'){
 			y =  numericalIntegrators.trapInt(xKnot,dervative.cos,t);
+			truthValues.cos(t);
 		} else if (type == 'k*sin(a*t)'){
 			y =  numericalIntegrators.trapInt(xKnot,dervative.sin,t);
+			truthValues.sin(t);
 		} else if(type == 'k*e^at'){
 			y = numericalIntegrators.trapInt(xKnot,dervative.eFunction,t);
+			truthValues.eFunction(t);
 		}
 		
 		for(let i = 0;i<y.length;i++){
 			yAxis.push(y[i]);
 		}
 	}
+
 
 	return {createXAxisArray,collectXAxisData,collectYAxisData,xAxis,yAxis}
 })();
@@ -221,6 +226,14 @@ const domElements = (()=>{
 
 	const createXOfTGraph = (x,y) => {
 		let graph = document.querySelector('#xoft');
+
+		let trace0 = {
+			x:x,
+			y:y,
+			mode: "lines+markers",
+			type:"scatter",
+			
+		}
 		
 
 		let trace1 = {
@@ -230,13 +243,18 @@ const domElements = (()=>{
 
 		}
 
-		let data = [{
+		let trace2 = {
 			x:x,
-			y:y,
-			mode: "lines+markers",
-			type:"scatter",
-			
-		},trace1];
+			y:truthValues.trueY,
+			mode: 'lines',
+			line: {
+				dash: 'dot',
+				width: 4
+			},
+			color: 'Green'
+		}
+
+		let data = [trace0,trace1,trace2];
 
 		let layout = {
 			xaxis : {title:"t"},
@@ -344,6 +362,18 @@ const numericalIntegrators = (() => {
 		return positionList;
 	}
 
+	const leftInt = (Xknot,derivativeFunc,t) => {
+		let positionList = [];
+		let currentX= Xknot; // initalizes x 
+		positionList.push(currentX);
+		for (let i = 0;i<t.length-1;i++){
+			let dt = t[i+1]-t[i];
+			let currentXDot = derivativeFunc(t[i]);
+			currentX = currentXDot*dt+currentX;
+			positionList.push(currentX);
+		}
+		return positionList;
+	}
 
 
 	return {trapInt}
@@ -377,6 +407,69 @@ const dervative = (()=> {
 	}
 
 	return {exponential,cos,sin,eFunction}
+})();
+
+const truthValues = (()=>{
+	 
+	let trueY = [];
+	let yValue = '';
+	const exponential = (t) => {
+		let k = parseFloat(domElements.getKValue());
+		let a = parseFloat(domElements.getDot());
+		let xknot = parseFloat(domElements.getKnot());
+		while(trueY.length>0){
+			trueY.pop();
+		}
+		for (let i =0;i<t.length;i++){
+			 yValue = (k*t[i]**(a+1)) / (a+1)+xknot;
+			trueY.push(yValue);
+		}
+		return trueY;
+	}
+
+	const cos = (t) => {
+		let k = parseFloat(domElements.getKValue());
+		let a = parseFloat(domElements.getDot());
+		let xknot = parseFloat(domElements.getKnot());
+		while(trueY.length>0){
+			trueY.pop();
+		}
+		for (let i =0;i<t.length;i++){
+			 yValue = k*Math.sin(a*t[i]) / a + xknot;
+			trueY.push(yValue);
+		}
+		return trueY;
+	}
+
+	const sin = (t) => {
+		let k = parseFloat(domElements.getKValue());
+		let a = parseFloat(domElements.getDot());
+		let xknot = parseFloat(domElements.getKnot());
+		while(trueY.length>0){
+			trueY.pop();
+		}
+		for (let i =0;i<t.length;i++){
+			yValue = -k*Math.cos(a*t[i])/a + (k/a) + xknot;
+			trueY.push(yValue);
+		}
+		return trueY;
+	}
+
+	const eFunction = (t) => {
+		let k = parseFloat(domElements.getKValue());
+		let a = parseFloat(domElements.getDot());
+		let xknot = parseFloat(domElements.getKnot());
+		while(trueY.length>0){
+			trueY.pop();
+		}
+		for (let i =0;i<t.length;i++){
+			yValue = k*Math.E**(a*t[i])/a - (k/a) + xknot;
+			trueY.push(yValue);
+		}
+		return trueY;
+	}
+
+	return {exponential,cos,sin,eFunction,trueY}
 })();
 
 mainFlow.mainSetUp();
