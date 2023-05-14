@@ -82,3 +82,7 @@ label[for='xdot-type'],label[for='xdot-value'],label[for = 'k-value']{
     margin-left: 6%;
     margin-top: -2%;
 }
+
+label[for='integrator-type']{
+    font-size: 17px;
+}

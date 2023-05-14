@@ -22,25 +22,27 @@ const xOfT = (()=>{
 	
 	}
 
-	const collectYAxisData = () => {
+	const collectYAxisData = (numericalFuntion) => {
 		while(yAxis.length>0){
 			yAxis.pop();
 		}
 		let y = [];
 		let xKnot = parseFloat(domElements.getKnot());
 		let t  = xAxis;
+
 		let type = domElements.getType();
+
 		if (type == 'k(t)^a'){
-			y = numericalIntegrators.trapInt(xKnot,dervative.exponential,t);
+			y = numericalFuntion(xKnot,dervative.exponential,t);
 			truthValues.exponential(t);
 		} else if(type == 'k*cos(a*t)'){
-			y =  numericalIntegrators.trapInt(xKnot,dervative.cos,t);
+			y =   numericalFuntion(xKnot,dervative.cos,t);
 			truthValues.cos(t);
 		} else if (type == 'k*sin(a*t)'){
-			y =  numericalIntegrators.trapInt(xKnot,dervative.sin,t);
+			y =   numericalFuntion(xKnot,dervative.sin,t);
 			truthValues.sin(t);
 		} else if(type == 'k*e^at'){
-			y = numericalIntegrators.trapInt(xKnot,dervative.eFunction,t);
+			y =  numericalFuntion(xKnot,dervative.eFunction,t);
 			truthValues.eFunction(t);
 		}
 		
@@ -49,8 +51,19 @@ const xOfT = (()=>{
 		}
 	}
 
+	const defineIntType = () => {
+		let integrator = domElements.getIntType();
+		if(integrator == 'trap'){
+			return numericalIntegrators.trapInt;
+		}else if(integrator == 'left'){
+			return numericalIntegrators.leftInt;
+		}else if(integrator == 'right'){
+			return numericalIntegrators.rightInt;
+		};
+	}
 
-	return {createXAxisArray,collectXAxisData,collectYAxisData,xAxis,yAxis}
+
+	return {createXAxisArray,collectXAxisData,collectYAxisData,xAxis,yAxis,defineIntType}
 })();
 
 const xDotOfT = (()=>{
@@ -101,7 +114,8 @@ const mainFlow= (()=>{
 	const main =()=>{
 		
 		xOfT.collectXAxisData();
-		xOfT.collectYAxisData ();
+		let fun = xOfT.defineIntType(); 
+		xOfT.collectYAxisData(fun);
 		xDotOfT.findYValues();
 		//creates a loop function fo plot 1 data point at a time
 		let i = 0;
@@ -185,6 +199,8 @@ const mainFlow= (()=>{
 
 	}
 
+	
+
 
 	return{main,resetFunction,hoverFunction,noHover,mainSetUp}
 })();
@@ -192,6 +208,10 @@ const mainFlow= (()=>{
 const domElements = (()=>{
 
 	//retrieve data from inputs of html
+	const getIntType = () => {
+		let input = document.querySelector('#integrator').value;
+		return input;
+	}
 	const getDT = ()=>{
 		let input = document.querySelector('#dt').value;
 		return input;
@@ -269,11 +289,21 @@ const domElements = (()=>{
 	const createXDotGraph = (x,y) =>{
 		let graph = document.querySelector('#xdotoft');
 
+		
+		let trace0 = {
+			x:x.slice(-2),
+			y:[y[y.length-2],y[y.length-2]],
+			fill:'tozeroy'
+		}
+		let trace2 = {
+			x:x.slice(-2),
+			y:[y[y.length-1],y[y.length-1]],
+			fill:'tozeroy'
+		}
 		let trace1 = {
 			x:x.slice(-2),
 			y:y.slice(-2),
 			fill:'tozeroy'
-
 		}
 
 		let data = [{
@@ -282,7 +312,17 @@ const domElements = (()=>{
 			mode: "lines+markers",
 			type:"scatter"
 			
-		},trace1];
+		}];
+		
+		let intType = domElements.getIntType();
+		if(intType == 'trap'){
+			data.push(trace1);
+		}else if(intType == 'left'){
+			data.push(trace0);
+		}else if(intType== 'right'){
+			data.push(trace2);
+		}
+		
 
 		let layout = {
 			xaxis : {title:"t"},
@@ -294,6 +334,7 @@ const domElements = (()=>{
 	
 	
 	}
+
 
 	//add event listeners 
 	const enter = () => {
@@ -340,7 +381,7 @@ const domElements = (()=>{
 		}
 	}
 
-	return{getDT,getTMax,getKnot,getDot,createXOfTGraph,enter,createXDotGraph,reset,hover,getKValue,getType,typeChosen,defaultInputs}
+	return{getDT,getTMax,getKnot,getDot,createXOfTGraph,enter,createXDotGraph,reset,hover,getKValue,getType,typeChosen,defaultInputs,getIntType}
 })();
 
 
@@ -376,7 +417,19 @@ const numericalIntegrators = (() => {
 	}
 
 
-	return {trapInt}
+	const rightInt = (Xknot,derivativeFunc,t) => {
+		let positionList = [];
+		let currentX= Xknot; // initalizes x 
+		positionList.push(currentX);
+		for (let i = 1;i<t.length-1;i++){
+			let dt = t[i] - t[i-1];
+			let currentXDot = derivativeFunc(t[i]);
+			currentX = currentXDot*dt+currentX;
+			positionList.push(currentX);
+		}
+		return positionList;
+	}
+	return {trapInt,leftInt,rightInt}
 })();
 
 const dervative = (()=> {
