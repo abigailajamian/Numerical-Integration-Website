@@ -144,6 +144,10 @@ const mainFlow= (()=>{
 		document.querySelector('#tmax').value = '';
 		document.querySelector('#xknot').value = '';
 		document.querySelector('#xdot').value = '';
+		document.querySelector('#integrator').value = 'trap';
+		document.querySelector('#xdot-type').value = 'type';
+		document.querySelector('#k-value').value = '';
+		document.querySelector('#xdot-value').value = '';
 		xOfT.xAxis = [];
 		xOfT.yAxis = [];
 		xDotOfT.xAxis = [];
@@ -184,6 +188,10 @@ const mainFlow= (()=>{
 			newDiv.innerText = 'tmax description here';
 			firstNew.append(newDiv);
 			firstNew.style.marginTop = '-9%';
+		} else if (label.innerText == 'Integrator Function :') {
+			newDiv.innerText = 'function description here';
+			firstNew.append(newDiv);
+			firstNew.style.marginTop = '-30%';
 		} else {
 			left.removeChild(firstNew);
 		}
@@ -198,9 +206,6 @@ const mainFlow= (()=>{
 		}
 
 	}
-
-	
-
 
 	return{main,resetFunction,hoverFunction,noHover,mainSetUp}
 })();
@@ -313,7 +318,7 @@ const domElements = (()=>{
 			type:"scatter"
 			
 		}];
-		
+
 		let intType = domElements.getIntType();
 		if(intType == 'trap'){
 			data.push(trace1);
@@ -527,4 +532,12 @@ const truthValues = (()=>{
 
 mainFlow.mainSetUp();
 
+//-------------------------------------------------------------------------------------------------
+
+/* TO-DO (FUTURE STEPS):
+
+1. Add descriptions with pictures
+2. Fix glitch when "graph values" is pressed again before the graph is completed runnning 
+
+*/
 
