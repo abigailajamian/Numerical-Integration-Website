@@ -1,11 +1,13 @@
 body{
     height: 100vh;
+    font-family:'Courier New', Courier, monospace;
+    background-color: rgb(72, 72, 72);
 }
 
 .header {
     display: flex;
     justify-content: center;
-    margin-top: 2%;
+    color: whitesmoke;
 }
 
 .left-side{
@@ -14,6 +16,7 @@ body{
     flex-direction: column;
     align-content:start;
     margin-left: 10%;
+    color: whitesmoke;
 }
 
 .left-side form{
@@ -39,23 +42,30 @@ form select {
     font-size: 15px;
     width: 8%;
     padding: 10px;
+    border-style: none;
     border-radius: 20px;
     font-weight: bold;
 }
 #submit{
-    background-color: rgba(41, 148, 254, 0.739);
-    color: rgb(255, 255, 255);
+    background-color:rgb(0, 255, 170);
+    color: rgb(0, 0, 0);
     
 }
-
+#reset{
+    background-color: rgb(255, 4, 4);
+}
 #xoft{
-    margin-left: 45%;
-    margin-top: -25%;
+    margin-left: 40%;
+    margin-top: -30%;
+    width: 50%;
+    height: 10%;
 }
 
 #xdotoft{
-    margin-left: 45%;
-    margin-top: 2%;
+    margin-left: 40%;
+    margin-top: 1%;
+    width: 50%;
+    height: 10%;
 }
 
 form label {
@@ -79,7 +89,7 @@ label[for='xdot-type'],label[for='xdot-value'],label[for = 'k-value']{
     margin-top: -2%;
 }
 #k-value,#xdot-value{
-    margin-left: 6%;
+    margin-left: 8%;
     margin-top: -2%;
 }
 
