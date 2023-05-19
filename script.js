@@ -112,29 +112,31 @@ const mainFlow= (()=>{
 	//main flow/calls all functions to make graph work 
 	
 	const main =()=>{
+			domElements.checkKnot();
+			xOfT.collectXAxisData();
+			let fun = xOfT.defineIntType(); 
+			xOfT.collectYAxisData(fun);
+			xDotOfT.findYValues();
+			//creates a loop function fo plot 1 data point at a time
+			let i = 0;
+			function myLoop(){
+				setTimeout(function(){
+					let subX = xOfT.xAxis.slice(0,i);
+					let subY = xOfT.yAxis.slice(0,i);
+					let subXDot =xDotOfT.xAxis.slice(0,i) ;
+					let subYDot= xDotOfT.yAxis.slice(0,i); 
+					domElements.createXOfTGraph(subX,subY);
+					domElements.createXDotGraph(subXDot,subYDot);
+	
+					i++;
+					if(i<xOfT.xAxis.length){
+						myLoop();
+					}
+				},100);
+			}
+			myLoop();
 		
-		xOfT.collectXAxisData();
-		let fun = xOfT.defineIntType(); 
-		xOfT.collectYAxisData(fun);
-		xDotOfT.findYValues();
-		//creates a loop function fo plot 1 data point at a time
-		let i = 0;
-		function myLoop(){
-			setTimeout(function(){
-				let subX = xOfT.xAxis.slice(0,i);
-				let subY = xOfT.yAxis.slice(0,i);
-				let subXDot =xDotOfT.xAxis.slice(0,i) ;
-				let subYDot= xDotOfT.yAxis.slice(0,i); 
-				domElements.createXOfTGraph(subX,subY);
-				domElements.createXDotGraph(subXDot,subYDot);
-
-				i++;
-				if(i<xOfT.xAxis.length){
-					myLoop();
-				}
-			},100);
-		}
-		myLoop();
+		
 		
 	}
 	//resets the whole page and clears arrays in xoft and xdotoft module patterns
@@ -172,33 +174,36 @@ const mainFlow= (()=>{
 		left.append(firstNew);
 		//making the desriptions
 		newDiv.id = 'popup';
+		
 		if(label.innerText == 'XDOT Value :'){
-			newDiv.innerText = 'xdot description here';
+			newDiv.innerText = 'Function used to integrate data.';
 			firstNew.append(newDiv);
 			firstNew.style.marginTop = '-25%';
+			
 		} else if (label.innerText == 'XKNOT Value :'){
-			newDiv.innerText = 'xknot description here';
+			newDiv.innerText = 'The begining value of the graph. \n X-Axis = 0 \n Y-Axis = XKNOT';
 			firstNew.append(newDiv);
 			firstNew.style.marginTop = '-17%';
 		}else if (label.innerText == 'DT Value :'){
-			newDiv.innerText = 'dt description here';
+			newDiv.innerText = 'Integration step size';
 			firstNew.append(newDiv);
 			firstNew.style.marginTop = '-13%';
 		}else if (label.innerText == 'T-Max Value :'){
-			newDiv.innerText = 'tmax description here';
+			newDiv.innerText = 'Integrate from 0 to T-Max.';
 			firstNew.append(newDiv);
 			firstNew.style.marginTop = '-9%';
 		} else if (label.innerText == 'Integrator Function :') {
-			newDiv.innerText = 'function description here';
+			newDiv.innerText = 'Define the numerical integrator used to find the area under the curve.';
 			firstNew.append(newDiv);
-			firstNew.style.marginTop = '-30%';
+			firstNew.style.marginTop = '-29%';
 		} else {
 			left.removeChild(firstNew);
 		}
+
 	}
 	const noHover = (label) => {
 		
-		if (label.innerText == 'Type -' ||label.innerText == 'a value -' ||label.innerText == 'k value -' ){
+		if (label.innerText == 'Type -'||label.innerText == 'a value -'||label.innerText == 'k value -'){
 			return;
 		} else{
 			let div = document.querySelector('.descriptions');
@@ -230,6 +235,25 @@ const domElements = (()=>{
 	const getKnot = () =>{
 		let input = document.querySelector('#xknot').value;
 		return input;
+	
+
+	}
+	const checkKnot = () => {
+		let valid = getType();
+		let input = getKnot();
+		if (valid == 'k(t)^a'){
+			if(input == '-1'){
+				let div = document.createElement('div');
+				let place = document.querySelector('form')
+				div.innerText = '*-1 is not a sufficent input for exponential integration*';
+				div.id = 'error'
+				div.style.color='rgb(255, 4, 4)'
+				place.insertBefore(div, place.children[11]);
+				//make it stop running main.flow
+			}
+		} else {
+			return;
+		}
 	}
 
 	const getDot = () => {
@@ -386,7 +410,7 @@ const domElements = (()=>{
 		}
 	}
 
-	return{getDT,getTMax,getKnot,getDot,createXOfTGraph,enter,createXDotGraph,reset,hover,getKValue,getType,typeChosen,defaultInputs,getIntType}
+	return{getDT,getTMax,getKnot,getDot,createXOfTGraph,enter,createXDotGraph,reset,hover,getKValue,getType,typeChosen,defaultInputs,getIntType,checkKnot}
 })();
 
 
@@ -536,8 +560,8 @@ mainFlow.mainSetUp();
 
 /* TO-DO (FUTURE STEPS):
 
-1. Add descriptions with pictures
+1. Add pictures/visual representation of descriptions 
 2. Fix glitch when "graph values" is pressed again before the graph is completed runnning 
-
+3. Stop graphs from moving when popup append
 */
 

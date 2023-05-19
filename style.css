@@ -96,3 +96,11 @@ label[for='xdot-type'],label[for='xdot-value'],label[for = 'k-value']{
 label[for='integrator-type']{
     font-size: 17px;
 }
+
+#error {
+    font-size: 12px;
+}
+
+#popup{
+    color: black
+}
