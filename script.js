@@ -150,10 +150,22 @@ const mainFlow= (()=>{
 		document.querySelector('#xdot-type').value = 'type';
 		document.querySelector('#k-value').value = '';
 		document.querySelector('#xdot-value').value = '';
-		xOfT.xAxis = [];
-		xOfT.yAxis = [];
-		xDotOfT.xAxis = [];
-		xDotOfT.yAxis = [];
+
+		while(xOfT.xAxis.length>0){
+			xOfT.xAxis.pop();
+		}
+		while(xOfT.yAxis.length>0){
+			xOfT.yAxis.pop();
+		}
+		
+		while(xDotOfT.xAxis.length>0){
+			xDotOfT.xAxis.pop();
+		}
+
+		while(xDotOfT.yAxis.length>0){
+			xDotOfT.yAxis.pop();
+		}
+
 		let xoft = document.querySelector('#xoft');
 		while(xoft.firstChild){
 			xoft.removeChild(xoft.firstChild);

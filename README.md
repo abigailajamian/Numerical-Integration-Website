@@ -1,1 +1,3 @@
 # Numerical-Integration-Website
+
+**Inputs**
